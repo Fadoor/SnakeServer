@@ -1,0 +1,358 @@
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class Server {
+	
+	private int Highscore;
+	private ArrayList<Game> Games = new ArrayList<Game>();
+	private Boolean Running = true;
+	private Database CurrentDatabase;
+	
+	public Server() {
+		
+		this.CurrentDatabase = new Database("jdbc:mysql://localhost:3306/snake", "root", "root");
+		
+	}
+	
+	public static void main(String[] args) {
+		
+		Server CurrentServer = new Server();
+	
+//		CurrentServer.ShowAllUsers();
+//		CurrentServer.DeleteUser("Hans");
+//		CurrentServer.ShowAllUsers();
+//		CurrentServer.ShowAllGames();
+		
+		CurrentServer.StartTui();
+	}
+	
+	public void StartTui() {
+		
+		User CurrentUser = null;
+		
+		Scanner scanner = new Scanner(System.in);
+		
+		while (this.Running) {
+			
+			System.out.println("Welcome To The Snakepit" + "\n" + "\n" + "Please type Username and Password" + "\n");
+			
+			
+			while (CurrentUser == null) {
+			
+				System.out.printf("Username: ");
+			
+				String Username = scanner.nextLine();
+				
+				System.out.print("\n" + "Password: ");
+				
+				String Password = scanner.nextLine();
+				
+				
+				CurrentUser = this.GetUserByUsername(Username);
+				
+				if (this.LogIn(Username, Password) && CurrentUser.GetIsAdmin()) {
+					
+					System.out.println("\n" + "Welcome To The Snakepit " + CurrentUser.GetUsername());
+				}
+				
+				else {
+					
+					CurrentUser = null;
+					
+					System.out.println("\n" + "Invalid Username or Password");
+					System.out.println("Please try again \n");
+				}
+			}
+			
+			System.out.println("\nAdmin menu:");
+			System.out.println("-----------");
+			
+			System.out.println("1) Create User");
+			System.out.println("2) Delete User");
+			System.out.println("3) Show all Users");
+			System.out.println("4) Show all Games");
+			System.out.println("5) Log out\n");
+			
+			while (CurrentUser != null) {
+				
+				int UserInput = -1;
+			
+				try {
+					
+					UserInput = scanner.nextInt();
+					
+				}
+				catch (InputMismatchException e) {
+					
+				}
+				
+				scanner.nextLine();//For at den ikke springer linjen over ved Username og Password
+				
+				String Username;
+				String Password;
+				Boolean IsAdmin;
+				Boolean result;
+				
+		        switch (UserInput) {
+		        
+		            case 1:
+		            	System.out.println("Type Username:");
+		            	Username = scanner.nextLine();
+		            	
+		            	if (Username.contains(" ")) {
+		            		
+		            		System.out.println("Username can not contain spaces\nPlease enter number for action");
+		            	}
+		            	
+		            	else {
+		            
+			            	System.out.println("Type Password:");
+			            	Password = scanner.nextLine();
+			            	System.out.println("Make Admin (true/false):");
+			            	
+			            	IsAdmin = null;
+			            	
+			            	while (IsAdmin == null) {
+			            	
+				            	try {
+				            	
+					            	IsAdmin = scanner.nextBoolean();
+					            }
+				            	catch (InputMismatchException e) {
+				            		
+				            		System.out.println("Wrong input, please type true or false");
+				            	}
+				            	
+				            	scanner.nextLine();
+			            	}
+			            	result = this.CreateUser(Username, Password, IsAdmin);
+			            	
+			            	if (result) {
+			            		
+			            		System.out.println("\nCongratulation " + Username + " is created\nPlease enter number for action");
+			            	}
+			            	else {
+			            		
+			            		System.out.println("\nFailed, " + Username + " already is taken\nPlease enter number for action");
+			            	}
+		            	}
+		            	
+		            break;
+		            
+		            case 2:
+		            	System.out.println("Type Username:");
+		            	Username = scanner.nextLine();
+		            	if (!CurrentUser.GetUsername().equals(Username)) {
+			            		
+			            	result = this.DeleteUser(Username);
+			            	
+			            	if (result) {
+			            		
+			            		System.out.println("\nSucces " + Username + " is deleted");
+			            	}
+			            	else {
+			            		
+			            		System.out.println("\nFailed, " + Username + " not found\nPlease enter number for action");
+			            	}
+			            	
+		            	}
+		            	
+		            	else {
+		            		
+		            		System.out.println("You can't delete yourself\nPlease enter number for action");
+		            	}
+		            
+		            break;
+		            
+		            case 3:
+		            	
+		            	this.ShowAllUsers();
+		            	
+		            	System.out.println("\nPlease enter number for action");
+		            	
+		            break;
+		            
+		            case 4:
+		            	
+		            	this.ShowAllGames();
+		            	
+		            	System.out.println("\nPlease enter number for action");
+		            	
+		            break;
+		            
+		            case 5:
+		            	
+		            	CurrentUser = null;
+		            	
+		            break;	
+		            
+		            default:
+		            	
+		            	System.out.println("\nInvalid input\nPlease enter number for action");
+		            
+		            break;
+		        }
+			}
+		}
+		
+		scanner.close();
+	}
+	
+	public Boolean LogIn(String Username, String Password) {
+		
+		User CurrentUser = this.GetUserByUsername(Username);
+		
+		if (CurrentUser != null) {
+			
+			if (CurrentUser.GetPassword().equals(Password)) {
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public User GetUserByUsername(String Username) {
+		
+		ResultSet Response = this.CurrentDatabase.Query("SELECT users.UserId, users.Password, users.IsAdmin, users.UserHighScore FROM users WHERE users.UserName = '" + Username + "';");
+		
+		if (Response != null) {
+			
+			try {
+				
+				if (Response.next()) {
+					
+					String Password = Response.getString("users.Password");
+					Boolean IsAdmin	= (Response.getInt("users.IsAdmin") == 1);	
+					
+					Response.close();
+					
+					return new User(Username, Password, IsAdmin); //0 og 1 laves om til false/true
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
+	
+	public Game GetGameByUsers(User User1, User User2) {
+		
+		for (Game CurrentGame : this.Games) {
+			
+			if (CurrentGame.GetPlayers()[0].equals(User1) && CurrentGame.GetPlayers()[1].equals(User2)) {
+				
+				return CurrentGame;
+			}	
+		}
+		
+		return null;
+	}
+	
+	public Boolean CreateUser(String Username, String Password, Boolean IsAdmin) {
+	
+		int temp = (IsAdmin) ? 1 : 0; // Midlertig variabel, Hvis IsAdmin er true = 1 og false = 0
+		
+		String SQL = "INSERT INTO users (users.Username, users.Password, users.IsAdmin) VALUES ('" + Username + "', '" + Password + "', " + temp + ");";
+		
+		return this.CurrentDatabase.Execute(SQL);	
+	}
+	
+	public Boolean DeleteUser(String Username) {
+		
+		String SQL = "DELETE FROM users WHERE users.Username = '" + Username + "';";
+		
+		return this.CurrentDatabase.Execute(SQL);
+	}
+	
+	public void ShowAllUsers() {
+			
+		String SQL = "SELECT users.Username FROM users ORDER BY users.Username ASC;"; // ASC er A-Z og DESC er Z-A
+		
+		ResultSet Response = this.CurrentDatabase.Query(SQL);
+		
+		if (Response != null) {
+			
+			try {
+				while (Response.next()) {
+					
+					System.out.println(Response.getString("users.Username"));
+					
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ShowAllGames() {
+		
+		for (Game CurrentGame : this.Games) {
+			
+			User[] Players = CurrentGame.GetPlayers();
+			
+			System.out.println(Players[0].GetUsername() + "\n" + Players[1].GetUsername());
+		}
+	}
+
+	public Boolean CreateGame(String Username1, String Username2) {
+		
+		User Player1 = this.GetUserByUsername(Username1);
+		User Player2 = this.GetUserByUsername(Username2);
+		
+		if (Player1 != null && Player2 != null) {
+			
+			Game newGame = new Game(Player1, Player2);
+			
+			this.Games.add(newGame);
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public Boolean DeleteGame(String Username1, String Username2) {
+		
+		User Player1 = this.GetUserByUsername(Username1);
+		User Player2 = this.GetUserByUsername(Username2);
+		
+		if (Player1 != null && Player2 != null) {
+			
+			Game CurrentGame = this.GetGameByUsers(Player1, Player2);
+			
+			if (CurrentGame != null) {
+				
+				this.Games.remove(CurrentGame);
+				
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public int GetHighscore() {
+		
+		return this.Highscore;
+		
+	}
+	
+	public int GetUserHighscore(String Username) {
+		
+		User CurrentUser = this.GetUserByUsername(Username);
+		
+		if (CurrentUser != null) {
+		
+			return CurrentUser.GetHighscore();
+		}
+		
+		return -1;
+	}	
+}

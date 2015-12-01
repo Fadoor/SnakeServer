@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -9,11 +11,22 @@ public class Server {
 	private ArrayList<Game> Games = new ArrayList<Game>();
 	private Boolean Running = true;
 	private Database CurrentDatabase;
+	private ServerSocket CurrentSocket;
 	
 	public Server() {
 		
 		this.CurrentDatabase = new Database("jdbc:mysql://localhost:3306/snake", "root", "root");
 		
+		try {
+			
+			CurrentSocket = new ServerSocket(10800);
+			
+			(new ClientServerConnection(this)).start(); //Starter en tråd
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args) {
@@ -355,4 +368,9 @@ public class Server {
 		
 		return -1;
 	}	
+	
+	public ServerSocket GetSocket() {
+		
+		return this.CurrentSocket;
+	}
 }

@@ -230,7 +230,7 @@ public class Server {
 	
 	public User GetUserByUsername(String Username) {
 		
-		ResultSet Response = this.CurrentDatabase.Query("SELECT users.UserId, users.Password, users.IsAdmin, users.UserHighScore FROM users WHERE users.UserName = '" + Username + "';");
+		ResultSet Response = this.CurrentDatabase.Query("SELECT users.Password, users.IsAdmin, users.UserHighScore FROM users WHERE users.UserName = '" + Username + "';");
 		
 		if (Response != null) {
 			

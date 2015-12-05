@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 public class Server {
 	
-	private int Highscore;
 	private ArrayList<Game> Games = new ArrayList<Game>();
 	private Boolean Running = true;
 	private Database CurrentDatabase;
@@ -349,7 +348,28 @@ public class Server {
 	
 	public int GetHighscore() {
 		
-		return this.Highscore;
+		ResultSet Response = this.CurrentDatabase.Query("SELECT MAX(users.Highscore) FROM users;");
+		
+		if (Response != null) {
+			
+			try {
+				
+				if (Response.next()) {
+					
+					int Highscore = Response.getInt("users.Highscore");
+					
+					Response.close();
+					
+					return Highscore;
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return -1;
 		
 	}
 	

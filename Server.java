@@ -348,7 +348,7 @@ public class Server {
 	
 	public int GetHighscore() {
 		
-		ResultSet Response = this.CurrentDatabase.Query("SELECT MAX(users.Highscore) FROM users;");
+		ResultSet Response = this.CurrentDatabase.Query("SELECT MAX(users.Highscore) AS Highscore FROM users;");
 		
 		if (Response != null) {
 			
@@ -356,7 +356,7 @@ public class Server {
 				
 				if (Response.next()) {
 					
-					int Highscore = Response.getInt("users.Highscore");
+					int Highscore = Response.getInt("Highscore");
 					
 					Response.close();
 					

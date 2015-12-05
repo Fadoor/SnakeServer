@@ -37,19 +37,34 @@ public class ClientServerConnection extends Thread {
 					JSONObject Received = new JSONObject(InputLine);
 					
 					String Method = Received.getString("Method");
+						
+					switch (Method) {
 					
-					if (Method.equals("Login")) {
+						case "Login":
+							
+							String Username = Received.getString("Username");
+							String Password = Received.getString("Password");
+							
+							Boolean Result = Server.LogIn(Username, Password);
+							
+							JSONObject Response = new JSONObject();
+							
+							Response.put("Result", Result);
+							
+							out.println(Response.toString());
+							
+							break;
 						
-						String Username = Received.getString("Username");
-						String Password = Received.getString("Password");
+						default:
+							
+							JSONObject Error = new JSONObject();
+							
+							Error.put("Error", "Invalid input, please try again");
+							
+							out.println(Error.toString());
 						
-						Boolean Result = Server.LogIn(Username, Password);
-						
-						JSONObject Response = new JSONObject();
-						
-						Response.put("Result", Result);
-						
-						out.println(Response.toString());
+						break;
+					
 					}
 				
 				} catch (JSONException e) {

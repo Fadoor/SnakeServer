@@ -40,12 +40,13 @@ public class ClientServerConnection extends Thread {
 					
 					Boolean Result;
 					JSONObject Response;
+					String Username;
 						
 					switch (Method) {
 					
 						case "Login":
 							
-							String Username = Received.getString("Username");
+							Username = Received.getString("Username");
 							String Password = Received.getString("Password");
 							
 							Result = Server.LogIn(Username, Password);
@@ -68,6 +69,21 @@ public class ClientServerConnection extends Thread {
 							Response = new JSONObject();
 							
 							Response.put("Result", Result);
+							
+							out.println(Response.toString());
+							
+							break;
+							
+						
+						case "UserHighscore":
+							
+							Username = Received.getString("Username");
+							
+							User CurrentUser = Server.GetUserByUsername(Username);
+							
+							Response = new JSONObject();
+							
+							Response.put("Result", CurrentUser.GetHighscore());
 							
 							out.println(Response.toString());
 							

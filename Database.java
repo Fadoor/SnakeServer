@@ -1,5 +1,7 @@
 import java.sql.*;
 
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
+
 public class Database {
 	
 	private String Adress;
@@ -50,6 +52,6 @@ public class Database {
 			e.printStackTrace();
 		}
 		
-		return null;
+		return false;
 	}
 }

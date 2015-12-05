@@ -239,11 +239,12 @@ public class Server {
 				if (Response.next()) {
 					
 					String Password = Response.getString("users.Password");
-					Boolean IsAdmin	= (Response.getInt("users.IsAdmin") == 1);	
+					Boolean IsAdmin	= (Response.getInt("users.IsAdmin") == 1);
+					int Highscore = Response.getInt("users.Highscore");
 					
 					Response.close();
 					
-					return new User(Username, Password, IsAdmin); //0 og 1 laves om til false/true
+					return new User(Username, Password, Highscore, IsAdmin); //0 og 1 laves om til false/true
 				}
 				
 			} catch (SQLException e) {

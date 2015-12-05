@@ -6,12 +6,12 @@ public class User {
 	private String Password;
 	private Boolean IsAdmin;
 	
-	public User(String Username, String Password, Boolean IsAdmin) {
+	public User(String Username, String Password, int Highscore, Boolean IsAdmin) {
 		
 		this.Username = Username;
 		this.Password = Password;
 		this.IsAdmin = IsAdmin;
-		this.Highscore = 0;	
+		this.Highscore = Highscore;	
 	}
 	
 	public String GetUsername() {

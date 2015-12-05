@@ -88,6 +88,17 @@ public class ClientServerConnection extends Thread {
 							out.println(Response.toString());
 							
 							break;
+							
+							
+						case "GlobalHighscore":
+							
+							Response = new JSONObject();
+							
+							Response.put("Result", Server.GetHighscore());
+							
+							out.println(Response.toString());
+							
+							break;
 						
 						
 						default:

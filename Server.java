@@ -315,18 +315,13 @@ public class Server {
 		}
 	}
 
-	public Boolean CreateGame(String Username1, String Username2) {
+	public Boolean CreateGame(String GameName) {
 		
-		User Player1 = this.GetUserByUsername(Username1);
-		User Player2 = this.GetUserByUsername(Username2);
+		if (!GameName.equals("")) {
 		
-		if (Player1 != null && Player2 != null) {
+			String SQL = "INSERT INTO games (games.Name) VALUES ('" + GameName + "');";
 			
-			Game newGame = new Game(Player1, Player2);
-			
-			this.Games.add(newGame);
-			
-			return true;
+			return this.CurrentDatabase.Execute(SQL);
 		}
 		
 		return false;
@@ -373,4 +368,34 @@ public class Server {
 		
 		return this.CurrentSocket;
 	}
+	
+	public Game GetGameByName(String Name) {
+		
+		ResultSet Response = this.CurrentDatabase.Query("SELECT games.Name, games.Player1, games.Player2, games.Player1Score, games.Player2Score FROM games WHERE games.Name = '" + Name + "';");
+		
+		if (Response != null) {
+			
+			try {
+				
+				if (Response.next()) {
+					
+					User Player1 = this.GetUserByUsername(Response.getString("games.Player1"));
+					User Player2 = this.GetUserByUsername(Response.getString("games.Player2"));
+					int Player1Score = Response.getInt("games.Player1Score");
+					int Player2Score = Response.getInt("games.Player2Score");
+					
+					Response.close();
+					
+					return new Game(Name, Player1, Player2, Player1Score, Player2Score);
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
+	
 }

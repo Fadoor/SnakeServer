@@ -37,6 +37,9 @@ public class ClientServerConnection extends Thread {
 					JSONObject Received = new JSONObject(InputLine);
 					
 					String Method = Received.getString("Method");
+					
+					Boolean Result;
+					JSONObject Response;
 						
 					switch (Method) {
 					
@@ -45,15 +48,31 @@ public class ClientServerConnection extends Thread {
 							String Username = Received.getString("Username");
 							String Password = Received.getString("Password");
 							
-							Boolean Result = Server.LogIn(Username, Password);
+							Result = Server.LogIn(Username, Password);
 							
-							JSONObject Response = new JSONObject();
+							Response = new JSONObject();
 							
 							Response.put("Result", Result);
 							
 							out.println(Response.toString());
 							
 							break;
+							
+							
+						case "CreateGame":
+							
+							String GameName = Received.getString("GameName");
+							
+							Result = Server.CreateGame(GameName);
+							
+							Response = new JSONObject();
+							
+							Response.put("Result", Result);
+							
+							out.println(Response.toString());
+							
+							break;
+						
 						
 						default:
 							

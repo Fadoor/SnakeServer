@@ -454,4 +454,23 @@ public class Server {
 		
 	}
 	
+	public boolean SetGamePlayer(Game CurrentGame, User CurrentUser, boolean Player2) {
+		
+		String SQL;
+		
+		if (Player2) {
+			
+			SQL = "UPDATE games SET games.Player2 = '" + CurrentUser.GetUsername() + "' WHERE games.Name = '" + CurrentGame.GetName() + "';";	
+		}
+		
+		else {
+			
+			SQL = "UPDATE games SET games.Player1 = '" + CurrentUser.GetUsername() + "' WHERE games.Name = '" + CurrentGame.GetName() + "';";
+			
+		}
+		
+		return this.CurrentDatabase.Execute(SQL);	
+		
+	}
+	
 }

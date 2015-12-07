@@ -21,6 +21,11 @@ public class Game {
 		return new User[] {this.Player1, this.Player2};
 	}
 	
+	public User GetPlayer2() {
+		
+		return this.Player2;	
+	}
+	
 	public String GetName() {
 		
 		return this.Name;

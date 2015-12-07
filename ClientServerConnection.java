@@ -128,6 +128,36 @@ public class ClientServerConnection extends Thread {
 							out.println(Response.toString());
 							
 							break;
+							
+						case "JoinGame":
+							
+							GameName = Received.getString("GameName");
+							
+							Username = Received.getString("Username");
+							
+							Game CurrentGame = Server.GetGameByName(GameName);
+							
+							CurrentUser = this.Server.GetUserByUsername(Username);
+							
+							Result = false;
+							
+							if (CurrentGame != null && CurrentUser != null) {
+								
+								if (CurrentGame.GetPlayer2() == null) {
+									
+									Result = this.Server.SetGamePlayer(CurrentGame, CurrentUser, true);
+									
+								}
+								
+							}
+							
+							Response = new JSONObject();
+							
+							Response.put("Result", Result);
+							
+							out.println(Response.toString());
+							
+							break;
 						
 						
 						default:

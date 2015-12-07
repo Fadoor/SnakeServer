@@ -260,8 +260,8 @@ public class ClientServerConnection extends Thread {
 									JSONGame.put("Name", CurrentGame.GetName());
 									JSONGame.put("Player1Score", CurrentGame.GetPlayer1Score());
 									JSONGame.put("Player2Score", CurrentGame.GetPlayer2Score());
-									JSONGame.put("Player2", CurrentGame.GetPlayer2());
-									JSONGame.put("Player1", CurrentGame.GetPlayer1());
+									JSONGame.put("Player2", CurrentGame.GetPlayer2().GetUsername());
+									JSONGame.put("Player1", CurrentGame.GetPlayer1().GetUsername());
 									
 									Response.put("GameInfo", JSONGame);
 									

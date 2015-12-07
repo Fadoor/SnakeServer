@@ -64,9 +64,28 @@ public class ClientServerConnection extends Thread {
 							
 						case "CreateGame":
 							
-							String GameName = Received.getString("GameName");
+							Result = false;
 							
-							Result = Server.CreateGame(GameName);
+							String GameName = Received.getString("GameName");
+							Username = Received.getString("Username");
+							User CurrentUser = this.Server.GetUserByUsername(Username);
+							
+							if (CurrentUser != null) {
+								
+								Result = Server.CreateGame(GameName);
+								
+								if (Result) {
+									
+									Game CurrentGame = Server.GetGameByName(GameName);
+									
+									if (Server.SetGamePlayer(CurrentGame, CurrentUser, false)) {
+										
+										Result = true;
+										
+									}
+								}
+								
+							}
 							
 							Response = new JSONObject();
 							
@@ -81,7 +100,7 @@ public class ClientServerConnection extends Thread {
 							
 							Username = Received.getString("Username");
 							
-							User CurrentUser = Server.GetUserByUsername(Username);
+							CurrentUser = Server.GetUserByUsername(Username);
 							
 							Response = new JSONObject();
 							
@@ -143,9 +162,20 @@ public class ClientServerConnection extends Thread {
 							
 							if (CurrentGame != null && CurrentUser != null) {
 								
-								if (CurrentGame.GetPlayer2() == null || CurrentGame.GetPlayer2().GetUsername().equals(CurrentUser.GetUsername())) {
+								if (!CurrentGame.GetPlayer1().GetUsername().equals(CurrentUser.GetUsername())) {
 									
-									Result = this.Server.SetGamePlayer(CurrentGame, CurrentUser, true);
+								
+									if (CurrentGame.GetPlayer2() == null || CurrentGame.GetPlayer2().GetUsername().equals(CurrentUser.GetUsername())) {
+										
+										Result = this.Server.SetGamePlayer(CurrentGame, CurrentUser, true);
+										
+									}
+									
+								}
+								
+								else {
+									
+									Result = true;
 									
 								}
 								

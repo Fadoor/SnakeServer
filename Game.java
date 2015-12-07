@@ -37,5 +37,10 @@ public class Game {
 		return Math.max(this.Player1Score, this.Player2Score);
 		
 	}
+	
+	public User GetPlayer1() {
+		
+		return this.Player1;
+	}
 
 }

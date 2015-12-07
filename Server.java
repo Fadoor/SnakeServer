@@ -473,4 +473,12 @@ public class Server {
 		
 	}
 	
+	public boolean DeleteGame(Game CurrentGame, User Owner) {
+		
+		String SQL = "DELETE FROM games WHERE games.Name = '" + CurrentGame.GetName() + "' AND games.Player1 = '" + Owner.GetUsername() + "';";
+	
+		
+		return this.CurrentDatabase.Execute(SQL);
+	}
+	
 }

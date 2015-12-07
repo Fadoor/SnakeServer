@@ -121,6 +121,7 @@ public class ClientServerConnection extends Thread {
 							
 							break;
 							
+						
 						case "ShowGames":
 							
 							ArrayList<Game> Games = Server.GetGames();
@@ -148,6 +149,7 @@ public class ClientServerConnection extends Thread {
 							
 							break;
 							
+						
 						case "JoinGame":
 							
 							GameName = Received.getString("GameName");
@@ -188,7 +190,33 @@ public class ClientServerConnection extends Thread {
 							out.println(Response.toString());
 							
 							break;
-						
+							
+						case "DeleteGame":
+							
+							GameName = Received.getString("GameName");
+							
+							Username = Received.getString("Username");
+							
+							CurrentGame = this.Server.GetGameByName(GameName);
+							
+							CurrentUser = this.Server.GetUserByUsername(Username);
+							
+							Result = false;
+							
+							if (CurrentGame != null && CurrentUser != null) {
+								
+								Result = this.Server.DeleteGame(CurrentGame, CurrentUser);
+								
+							}
+							
+							Response = new JSONObject();
+							
+							Response.put("Result", Result);
+							
+							out.println(Response.toString());
+							
+							break;
+							
 						
 						default:
 							

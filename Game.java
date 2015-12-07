@@ -20,5 +20,17 @@ public class Game {
 		
 		return new User[] {this.Player1, this.Player2};
 	}
+	
+	public String GetName() {
+		
+		return this.Name;
+		
+	}
+	
+	public int GetHighscore() {
+		
+		return Math.max(this.Player1Score, this.Player2Score);
+		
+	}
 
 }

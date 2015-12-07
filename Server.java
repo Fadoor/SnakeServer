@@ -419,4 +419,39 @@ public class Server {
 		return null;
 	}
 	
+	public ArrayList<Game> GetGames() {
+		
+		ResultSet Response = this.CurrentDatabase.Query("SELECT games.Name, games.Player1, games.Player2, games.Player1Score, games.Player2Score FROM games");
+		
+		if (Response != null) {
+			
+			ArrayList<Game> Result = new ArrayList<Game>();
+			
+			try {
+				
+				while (Response.next()) {
+					
+					String Name = Response.getString("Games.Name");
+					User Player1 = this.GetUserByUsername(Response.getString("Games.Player1"));
+					User Player2 = this.GetUserByUsername(Response.getString("Games.Player2"));
+					int Player1Score = Response.getInt("Games.Player1Score");
+					int Player2Score = Response.getInt("Games.Player2Score");
+					
+					Result.add(new Game(Name, Player1, Player2, Player1Score, Player2Score));
+				}
+				
+				Response.close();
+				
+				return Result;
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
+		
+	}
+	
 }

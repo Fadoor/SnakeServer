@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+
 import org.json.*;
 
 public class ClientServerConnection extends Thread {
@@ -95,6 +97,33 @@ public class ClientServerConnection extends Thread {
 							Response = new JSONObject();
 							
 							Response.put("Result", Server.GetHighscore());
+							
+							out.println(Response.toString());
+							
+							break;
+							
+						case "ShowGames":
+							
+							ArrayList<Game> Games = Server.GetGames();
+							
+							JSONObject JSONGame;
+							
+							JSONArray JSONGames = new JSONArray();
+							
+							for (Game CurrentGame : Games) {
+								
+								JSONGame = new JSONObject();
+								
+								JSONGame.put("Name", CurrentGame.GetName());
+								JSONGame.put("Highscore", CurrentGame.GetHighscore());
+								
+								JSONGames.put(JSONGame);
+								
+							}
+							
+							Response = new JSONObject();
+							
+							Response.put("Result", JSONGames);
 							
 							out.println(Response.toString());
 							

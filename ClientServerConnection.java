@@ -143,7 +143,7 @@ public class ClientServerConnection extends Thread {
 							
 							if (CurrentGame != null && CurrentUser != null) {
 								
-								if (CurrentGame.GetPlayer2() == null) {
+								if (CurrentGame.GetPlayer2() == null || CurrentGame.GetPlayer2().GetUsername().equals(CurrentUser.GetUsername())) {
 									
 									Result = this.Server.SetGamePlayer(CurrentGame, CurrentUser, true);
 									

@@ -42,5 +42,15 @@ public class Game {
 		
 		return this.Player1;
 	}
+	
+	public int GetPlayer1Score() {
+		
+		return this.Player1Score;
+	}
+	
+	public int GetPlayer2Score() {
+		
+		return this.Player2Score;
+	}
 
 }

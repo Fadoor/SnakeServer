@@ -218,6 +218,66 @@ public class ClientServerConnection extends Thread {
 							break;
 							
 						
+						case "GameInfo":
+							
+							GameName = Received.getString("GameName");
+							
+							Username = Received.getString("Username");
+							
+							CurrentGame = this.Server.GetGameByName(GameName);
+							
+							CurrentUser = this.Server.GetUserByUsername(Username);
+							
+							Result = false;
+							
+							Response = new JSONObject();
+							
+							boolean found = false;
+							
+							if (CurrentGame != null && CurrentUser != null) {
+								
+								if (CurrentUser.GetUsername().equals(CurrentGame.GetPlayer1().GetUsername())) {
+									
+									found = true;
+									
+								}
+								
+								if (CurrentGame.GetPlayer2() != null) {
+									
+									if (CurrentUser.GetUsername().equals(CurrentGame.GetPlayer2().GetUsername())) {
+										
+										found = true;
+										
+										
+									}
+									
+								}
+								
+								if (found) {
+
+									JSONGame = new JSONObject();
+									
+									JSONGame.put("Name", CurrentGame.GetName());
+									JSONGame.put("Player1Score", CurrentGame.GetPlayer1Score());
+									JSONGame.put("Player2Score", CurrentGame.GetPlayer2Score());
+									JSONGame.put("Player2", CurrentGame.GetPlayer2());
+									JSONGame.put("Player1", CurrentGame.GetPlayer1());
+									
+									Response.put("GameInfo", JSONGame);
+									
+									Result = true;
+								
+								}
+								
+							}
+							
+							Response.put("Result", Result);
+							
+							out.println(Response.toString());
+							
+							break;
+							
+						
 						default:
 							
 							JSONObject Error = new JSONObject();

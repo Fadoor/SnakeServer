@@ -167,7 +167,7 @@ public class ClientServerConnection extends Thread {
 								if (!CurrentGame.GetPlayer1().GetUsername().equals(CurrentUser.GetUsername())) {
 									
 								
-									if (CurrentGame.GetPlayer2() == null || CurrentGame.GetPlayer2().GetUsername().equals(CurrentUser.GetUsername())) {
+									if (CurrentGame.GetPlayer2() != null || CurrentGame.GetPlayer2().GetUsername().equals(CurrentUser.GetUsername())) {
 										
 										Result = this.Server.SetGamePlayer(CurrentGame, CurrentUser, true);
 										
@@ -232,35 +232,22 @@ public class ClientServerConnection extends Thread {
 							
 							Response = new JSONObject();
 							
-							boolean found = false;
-							
 							if (CurrentGame != null && CurrentUser != null) {
 								
-								if (CurrentUser.GetUsername().equals(CurrentGame.GetPlayer1().GetUsername())) {
-									
-									found = true;
-									
-								}
-								
-								if (CurrentGame.GetPlayer2() != null) {
-									
-									if (CurrentUser.GetUsername().equals(CurrentGame.GetPlayer2().GetUsername())) {
-										
-										found = true;
-										
-										
-									}
-									
-								}
-								
-								if (found) {
+								if (CurrentGame.HasPlayerByName(CurrentUser.GetUsername())) {
 
 									JSONGame = new JSONObject();
 									
-									JSONGame.put("Name", CurrentGame.GetName());
+									JSONGame.put("GameName", CurrentGame.GetName());
 									JSONGame.put("Player1Score", CurrentGame.GetPlayer1Score());
 									JSONGame.put("Player2Score", CurrentGame.GetPlayer2Score());
-									JSONGame.put("Player2", CurrentGame.GetPlayer2().GetUsername());
+									
+									if(CurrentGame.GetPlayer2() != null) {
+										
+										JSONGame.put("Player2", CurrentGame.GetPlayer2().GetUsername());
+									
+									}
+									
 									JSONGame.put("Player1", CurrentGame.GetPlayer1().GetUsername());
 									
 									Response.put("GameInfo", JSONGame);

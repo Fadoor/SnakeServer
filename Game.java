@@ -52,5 +52,27 @@ public class Game {
 		
 		return this.Player2Score;
 	}
-
+	
+	public boolean HasPlayerByName(String Username) {
+		
+		if (this.Player2 != null) {
+			
+			
+			if (this.Player2.GetUsername().equals(Username)) {
+				
+				return true;
+			}
+			
+		}
+		
+		if (this.Player1 != null) {
+		
+			if (this.Player1.GetUsername().equals(Username)) {
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }

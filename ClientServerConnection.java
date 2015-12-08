@@ -84,6 +84,9 @@ public class ClientServerConnection extends Thread {
 									
 									Game CurrentGame = Server.GetGameByName(GameName);
 									
+									CurrentGame.ResetGame();
+									this.Server.UpdateGame(CurrentGame);
+									
 									if (Server.SetGamePlayer(CurrentGame, CurrentUser, false)) {
 										
 										Result = true;
@@ -296,6 +299,12 @@ public class ClientServerConnection extends Thread {
 							if (CurrentGame != null && CurrentUser != null) {
 								
 								Result = this.Server.LeaveGame(CurrentGame, CurrentUser);
+								
+								if (Result) {
+									
+									CurrentGame.ResetGame();
+									this.Server.UpdateGame(CurrentGame);
+								}
 								
 							}
 							

@@ -32,11 +32,6 @@ public class Server {
 	public static void main(String[] args) {
 		
 		Server CurrentServer = new Server();
-	
-//		CurrentServer.ShowAllUsers();
-//		CurrentServer.DeleteUser("Hans");
-//		CurrentServer.ShowAllUsers();
-//		CurrentServer.ShowAllGames();
 		
 		CurrentServer.StartTui();
 	}
@@ -308,11 +303,11 @@ public class Server {
 	
 	public void ShowAllGames() {
 		
-		for (Game CurrentGame : this.Games) {
+		ArrayList<Game> Games = GetGames();
+		
+		for (Game CurrentGame: Games) {
 			
-			User[] Players = CurrentGame.GetPlayers();
-			
-			System.out.println(Players[0].GetUsername() + "\n" + Players[1].GetUsername());
+			System.out.println("Game:\n" + CurrentGame.GetName());
 		}
 	}
 

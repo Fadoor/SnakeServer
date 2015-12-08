@@ -55,6 +55,12 @@ public class ClientServerConnection extends Thread {
 							
 							Response = new JSONObject();
 							
+							if (Result) {
+								
+								Response.put("Username", Server.GetUserByUsername(Username).GetUsername());
+								
+							}
+							
 							Response.put("Result", Result);
 							
 							out.println(Response.toString());

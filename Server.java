@@ -481,4 +481,13 @@ public class Server {
 		return this.CurrentDatabase.Execute(SQL);
 	}
 	
+	public boolean LeaveGame(Game CurrentGame, User CurrentUser) {
+		
+		String SQL = "UPDATE games SET games.Player2 = null WHERE games.Name = '" + CurrentGame.GetName() + "' and games.Player2 = '" + CurrentUser.GetUsername() + "';";
+	
+		
+		return this.CurrentDatabase.Execute(SQL);
+		
+	}
+	
 }

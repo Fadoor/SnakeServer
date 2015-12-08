@@ -280,6 +280,34 @@ public class ClientServerConnection extends Thread {
 							break;
 							
 						
+						case "LeaveGame":
+							
+							GameName = Received.getString("GameName");
+							
+							Username = Received.getString("Username");
+							
+							CurrentGame = this.Server.GetGameByName(GameName);
+							
+							CurrentUser = this.Server.GetUserByUsername(Username);
+							
+							Result = false;
+							
+							
+							if (CurrentGame != null && CurrentUser != null) {
+								
+								Result = this.Server.LeaveGame(CurrentGame, CurrentUser);
+								
+							}
+							
+							Response = new JSONObject();
+							
+							Response.put("Result", Result);
+							
+							out.println(Response.toString());
+							
+							break;
+							
+						
 						default:
 							
 							JSONObject Error = new JSONObject();

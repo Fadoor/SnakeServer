@@ -161,13 +161,24 @@ public class ClientServerConnection extends Thread {
 							CurrentUser = this.Server.GetUserByUsername(Username);
 							
 							Result = false;
+
+							Response = new JSONObject();
 							
 							if (CurrentGame != null && CurrentUser != null) {
 								
-								if (!CurrentGame.GetPlayer1().GetUsername().equals(CurrentUser.GetUsername())) {
+								if (!(CurrentGame.GetPlayer1().GetUsername().equals(CurrentUser.GetUsername()))) {
 									
-								
-									if (CurrentGame.GetPlayer2() != null || CurrentGame.GetPlayer2().GetUsername().equals(CurrentUser.GetUsername())) {
+									if (CurrentGame.GetPlayer2() != null) {
+																				
+										if (CurrentGame.GetPlayer2().GetUsername().equals(CurrentUser.GetUsername())) {
+											
+											Result = true;
+											
+										}
+										
+									}
+									
+									else {
 										
 										Result = this.Server.SetGamePlayer(CurrentGame, CurrentUser, true);
 										
@@ -182,9 +193,7 @@ public class ClientServerConnection extends Thread {
 								}
 								
 							}
-							
-							Response = new JSONObject();
-							
+
 							Response.put("Result", Result);
 							
 							out.println(Response.toString());

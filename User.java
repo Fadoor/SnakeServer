@@ -16,7 +16,7 @@ public class User {
 	
 	public String GetUsername() {
 		
-		return this.Username;
+		return this.Username.toLowerCase();
 	}
 	
 	public String GetPassword() {

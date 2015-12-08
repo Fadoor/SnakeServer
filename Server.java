@@ -3,6 +3,7 @@ import java.net.ServerSocket;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Server {
@@ -327,25 +328,6 @@ public class Server {
 		return false;
 	}
 	
-	public Boolean DeleteGame(String Username1, String Username2) {
-		
-		User Player1 = this.GetUserByUsername(Username1);
-		User Player2 = this.GetUserByUsername(Username2);
-		
-		if (Player1 != null && Player2 != null) {
-			
-			Game CurrentGame = this.GetGameByUsers(Player1, Player2);
-			
-			if (CurrentGame != null) {
-				
-				this.Games.remove(CurrentGame);
-				
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public int GetHighscore() {
 		
 		ResultSet Response = this.CurrentDatabase.Query("SELECT MAX(users.Highscore) AS Highscore FROM users;");
@@ -383,7 +365,14 @@ public class Server {
 		}
 		
 		return -1;
-	}	
+	}
+	
+	public boolean SetUserHighscore(User CurrentUser, int Highscore) {
+		
+		String SQL = "UPDATE users SET users.Highscore = '" + Highscore + "' WHERE users.Username = '" + CurrentUser.GetUsername() + "';";
+	
+		return this.CurrentDatabase.Execute(SQL);
+	}
 	
 	public ServerSocket GetSocket() {
 		
@@ -392,7 +381,7 @@ public class Server {
 	
 	public Game GetGameByName(String Name) {
 		
-		ResultSet Response = this.CurrentDatabase.Query("SELECT games.Name, games.Player1, games.Player2, games.Player1Score, games.Player2Score FROM games WHERE games.Name = '" + Name + "';");
+		ResultSet Response = this.CurrentDatabase.Query("SELECT games.Name, games.Player1, games.Player2, games.Player1Score, games.Player2Score, games.BallX, games.BallY, games.Player1X, games.Player1Y, games.Player2X, games.Player2Y, games.Player1Moves, games.Player2Moves FROM games WHERE games.Name = '" + Name + "';");
 		
 		if (Response != null) {
 			
@@ -404,10 +393,18 @@ public class Server {
 					User Player2 = this.GetUserByUsername(Response.getString("games.Player2"));
 					int Player1Score = Response.getInt("games.Player1Score");
 					int Player2Score = Response.getInt("games.Player2Score");
+					int BallX = Response.getInt("games.BallX");
+					int BallY = Response.getInt("games.BallY");
+					int Player1X = Response.getInt("games.Player1X");
+					int Player1Y = Response.getInt("games.Player1Y");
+					int Player2X = Response.getInt("games.Player2X");
+					int Player2Y = Response.getInt("games.Player2Y");
+					String Player1Moves = Response.getString("games.Player1Moves");
+					String Player2Moves = Response.getString("games.Player2Moves");
 					
 					Response.close();
 					
-					return new Game(Name, Player1, Player2, Player1Score, Player2Score);
+					return new Game(Name, Player1, Player2, Player1Score, Player2Score, BallX, BallY, Player1X, Player1Y, Player2X, Player2Y, Player1Moves, Player2Moves);
 				}
 				
 			} catch (SQLException e) {
@@ -477,6 +474,27 @@ public class Server {
 		
 		String SQL = "DELETE FROM games WHERE games.Name = '" + CurrentGame.GetName() + "' AND games.Player1 = '" + Owner.GetUsername() + "';";
 	
+		
+		return this.CurrentDatabase.Execute(SQL);
+	}
+	
+	public boolean UpdatePlayerMove(Game CurrentGame, User CurrentUser, String PlayerMoves) {
+		
+		String SQL = "UPDATE games SET games.Player2Moves = '" + PlayerMoves + "' WHERE games.Name = '" + CurrentGame.GetName() + "';";
+		
+		if (CurrentGame.GetPlayer1().GetUsername().equals(CurrentUser.GetUsername())) {
+			
+			SQL = "UPDATE games SET games.Player1Moves = '" + PlayerMoves + "' WHERE games.Name = '" + CurrentGame.GetName() + "';";
+			
+		}
+		
+		return this.CurrentDatabase.Execute(SQL);
+		
+	}
+	
+	public boolean UpdateGame(Game CurrentGame) {
+		
+		String SQL = CurrentGame.GetUpdateSQL();
 		
 		return this.CurrentDatabase.Execute(SQL);
 	}

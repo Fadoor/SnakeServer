@@ -307,6 +307,68 @@ public class ClientServerConnection extends Thread {
 							
 							break;
 							
+							
+						case "UserInput":
+							
+							GameName = Received.getString("GameName");
+						
+							Username = Received.getString("Username");
+							
+							String UserInput = Received.getString("UserInput");
+							
+							CurrentGame = this.Server.GetGameByName(GameName);
+							
+							CurrentUser = this.Server.GetUserByUsername(Username);
+							
+							int ResultState = -1;
+							
+							if (CurrentGame != null && CurrentUser != null && CurrentGame.GetPlayer1() != null && CurrentGame.GetPlayer2() != null) {
+								
+								if (CurrentGame.HasPlayerByName(CurrentUser.GetUsername())) {
+									
+									if (Server.UpdatePlayerMove(CurrentGame, CurrentUser, UserInput)) {
+										
+										CurrentGame = this.Server.GetGameByName(GameName);
+																				
+										if (CurrentGame.GetPlayer1Moves() != null && CurrentGame.GetPlayer2Moves() != null) {
+											
+											ResultState = CurrentGame.SimulateGame();
+											this.Server.UpdateGame(CurrentGame);
+											
+											if (ResultState == 1 || ResultState == 2) {
+												
+												if (CurrentGame.GetPlayer1Score() > CurrentGame.GetPlayer1().GetHighscore()) {
+													this.Server.SetUserHighscore(CurrentGame.GetPlayer1(), CurrentGame.GetPlayer1Score());
+												}
+												
+												if (CurrentGame.GetPlayer2Score() > CurrentGame.GetPlayer2().GetHighscore()) {
+													this.Server.SetUserHighscore(CurrentGame.GetPlayer2(), CurrentGame.GetPlayer2Score());
+												}
+												
+												CurrentGame.ResetGame();
+												this.Server.UpdateGame(CurrentGame);
+											}
+										}
+										else {
+											
+											ResultState = -2;
+										}
+																														
+									}
+									
+								}
+								
+							}
+							
+							Response = new JSONObject();
+							
+							Response.put("Result", ResultState);
+							
+							out.println(Response.toString());
+							
+							break;
+							
+							
 						
 						default:
 							

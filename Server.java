@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.sql.*;
@@ -5,6 +8,9 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Server {
 	
@@ -15,7 +21,39 @@ public class Server {
 	
 	public Server() {
 		
-		this.CurrentDatabase = new Database("jdbc:mysql://localhost:3306/snake", "root", "root");
+		String DatabaseAdress = "localhost";
+		int DatabasePort = 3306;
+		String DatabaseName = "snake";
+		String DatabaseLoginName = "root";
+		String DatabaseLoginPassword = "root";
+		int ServerPort = 10800;
+		
+		try {
+			BufferedReader Reader = new BufferedReader(new FileReader("SnakeServerConfig.txt"));
+			
+			try {
+				JSONObject Setup = new JSONObject(Reader.readLine());
+				
+				DatabaseAdress = Setup.getString("DatabaseAdress");
+				DatabasePort = Setup.getInt("DatabasePort");
+				DatabaseName = Setup.getString("DatabaseName");
+				DatabaseLoginName = Setup.getString("DatabaseLoginName");
+				DatabaseLoginPassword = Setup.getString("DatabaseLoginPassword");
+				ServerPort = Setup.getInt("ServerPort");
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		this.CurrentDatabase = new Database("jdbc:mysql://" + DatabaseAdress + ":" + DatabasePort + "/" + DatabaseName, DatabaseLoginName, DatabaseLoginPassword);
 		
 		try {
 			
